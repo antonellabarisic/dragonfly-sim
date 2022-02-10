@@ -36,8 +36,6 @@ RUN mkdir -p $WORKSPACE/data && \
 RUN cd $WORKSPACE && \
     git clone --recurse-submodules -j8 https://github.com/ArduPilot/ardupilot.git
 
-RUN cd $WORKSPACE && \
-    git clone --recurse-submodules -j8 https://github.com/SwiftGust/ardupilot_gazebo.git
 
 # Add hummingbird springs as default location (https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)
 RUN echo "HUMMINGBIRD=35.824822,-106.6577015,2036,0" >> $WORKSPACE/ardupilot/Tools/autotest/locations.txt
@@ -51,17 +49,26 @@ RUN pip install pexpect
 RUN cd $WORKSPACE/ardupilot && \
     ./waf configure && ./waf copter
 
-RUN cd $WORKSPACE/ardupilot_gazebo && \
-    mkdir build && cd build && cmake .. && make -j4 && make install
+# RUN cd $WORKSPACE/ardupilot_gazebo && \
+#     mkdir build && cd build && cmake .. && make -j4 && make install
 
 RUN mkdir $WORKSPACE/gazebo
 
 COPY ./gazebo $WORKSPACE/gazebo
 
+RUN cd $WORKSPACE/gazebo/src && \
+    git clone --recurse-submodules -j8 https://github.com/antonellabarisic/ardupilot_gazebo.git
+
 RUN source /opt/ros/melodic/setup.bash && \
     cd $WORKSPACE/gazebo && \
-    catkin_make && \
-    catkin_make install
+    catkin build
+
+RUN echo "source /opt/ros/melodic/setup.bash" >> /root/.bashrc
+RUN echo "source /workspace/gazebo/devel/setup.bash" >> /root/.bashrc
+RUN echo "alias re-source='source ~/.bashrc'" >> /root/.bashrc
+
+RUN echo "export GAZEBO_MODEL_PATH=/workspace/gazebo/src/ardupilot_gazebo/models:/workspace/gazebo/src/ardupilot_gazebo/models_gazebo:$GAZEBO_MODEL_PATH" >> /root/.bashrc
+RUN echo "export GAZEBO_PLUGIN_PATH=/workspace/gazebo/build/ardupilot_gazebo:$GAZEBO_PLUGIN_PATH" >> /root/.bashrc
 
 COPY ./templates $WORKSPACE/templates
 

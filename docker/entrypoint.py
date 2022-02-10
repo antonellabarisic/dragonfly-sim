@@ -16,7 +16,7 @@ def template(templateFileName, values):
 def run_simulation(args):
     processes = []
     # Start Gazebo
-    processes.append(subprocess.Popen("/entrypoint.sh roslaunch dragonfly_sim run_sim.launch gui:={}".format("{}".format(args.gui).lower()), shell=True))
+    processes.append(subprocess.Popen("roslaunch dragonfly_sim run_sim.launch gui:={}".format("{}".format(args.gui).lower()), shell=True))
 
     time.sleep(3)
 
@@ -39,7 +39,7 @@ def run_simulation(args):
         row = spacing * int(i / columnsize)
         column = spacing * (i % columnsize)
 
-        processes.append(subprocess.Popen('/entrypoint.sh roslaunch dragonfly_sim juav.launch '
+        processes.append(subprocess.Popen('roslaunch dragonfly_sim juav.launch '
                                           "name:=dragonfly{} ".format(i + 1) +
                                           "instance:={} ".format(i) +
                                           "tgt_system:={} ".format(i + 1) +
