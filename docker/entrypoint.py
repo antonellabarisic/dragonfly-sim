@@ -51,6 +51,36 @@ def run_simulation(args):
                                           "location:={} ".format(args.location),
                                           shell=True))
 
+    # Start intruders
+    angle = 360/args.intruders if args.intruders else 0
+    r = args.zone_radius
+
+    for i in range(0, args.intruders):
+        intruder_parameters = {'target': (i + args.drones + 1),
+                      'name': "intruder{}".format(i + args.drones + 1),
+                      'fdm_port_in': (9002 + ((i + args.drones) * 10)),
+                      'fdm_port_out': (9003 + ((i + args.drones) * 10))
+                      }
+        jintruder_param = template('/workspace/templates/juav.param.template', intruder_parameters)
+        intruder_sdf = template('/workspace/templates/intruder_model.sdf.template', intruder_parameters)
+        tempfiles.append(jintruder_param)
+        tempfiles.append(intruder_sdf)
+
+        x_tmp = r * math.cos(angle * i)
+        y_tmp = r * math.sin(angle * i)
+
+        processes.append(subprocess.Popen('roslaunch dragonfly_sim juav.launch '
+                                          "name:=intruder{} ".format(i + args.drones + 1) +
+                                          "instance:={} ".format(i + args.drones ) +
+                                          "tgt_system:={} ".format(i + args.drones + 1) +
+                                          "spawn_offset_x:={} ".format(x_tmp) +
+                                          "spawn_offset_y:={} ".format(y_tmp) +
+                                          "fcu_url:=udp://127.0.0.1:{}@{} ".format(14551 + ((i + args.drones) * 10), 14555 + ((i + args.drones) * 10)) +
+                                          "param_file:={} ".format(jintruder_param.name) +
+                                          "model_file:={} ".format(intruder_sdf.name) +
+                                          "location:={} ".format(args.location),
+                                          shell=True))
+
     for p in processes:
         p.wait()
 
@@ -73,7 +103,13 @@ def get_args():
     parser.add_argument(
         '--drones',
         type=int,
-        default=1)
+        default=1
+    )
+    parser.add_argument(
+        '--intruders',
+        type=int,
+        default=1
+    )
     parser.add_argument(
         '--location',
         type=str,
@@ -85,6 +121,11 @@ def get_args():
         nargs='?',
         const=True,
         default=True)
+    parser.add_argument(
+        '--zone_radius',
+        type=float,
+        default=10.0
+    )
     args = parser.parse_args()
     return args
 
