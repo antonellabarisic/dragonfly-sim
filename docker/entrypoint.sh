@@ -2,13 +2,9 @@
 set -e
 
 source /opt/ros/melodic/setup.bash
-source /workspace/gazebo/install/setup.bash
+source /workspace/gazebo/devel/setup.bash
 
-export GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:"/workspace/gazebo/src/dragonfly_sim/models"
-export GAZEBO_PLUGIN_PATH=${GAZEBO_PLUGIN_PATH}:"/workspace/ardupilot_gazebo/build"
-export GAZEBO_MODEL_PATH=/workspace/ardupilot_gazebo/models:${GAZEBO_MODEL_PATH}
-export GAZEBO_MODEL_PATH=/workspace/ardupilot_gazebo/models_gazebo:${GAZEBO_MODEL_PATH}
-export GAZEBO_RESOURCE_PATH=/workspace/ardupilot_gazebo/worlds:${GAZEBO_RESOURCE_PATH}
-export GAZEBO_PLUGIN_PATH=/workspace/ardupilot_gazebo/build:${GAZEBO_PLUGIN_PATH}
+export GAZEBO_MODEL_PATH=/workspace/gazebo/src/ardupilot_gazebo/models:/workspace/gazebo/src/ardupilot_gazebo/models_gazebo:/workspace/gazebo/src/dragonfly_sim/models:$GAZEBO_MODEL_PATH
+export GAZEBO_PLUGIN_PATH=/workspace/gazebo/build/ardupilot_gazebo:$GAZEBO_PLUGIN_PATH
 
 exec "$@"

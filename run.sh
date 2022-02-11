@@ -22,4 +22,4 @@ docker run -it \
     --ip 172.18.0.2 \
     -p 11311:11311 \
     --network ros-net \
-    dragonfly-sim:latest --drones 4 --location BALLOON_FIESTA
+    dragonfly-sim:latest

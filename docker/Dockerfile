@@ -67,7 +67,7 @@ RUN echo "source /opt/ros/melodic/setup.bash" >> /root/.bashrc
 RUN echo "source /workspace/gazebo/devel/setup.bash" >> /root/.bashrc
 RUN echo "alias re-source='source ~/.bashrc'" >> /root/.bashrc
 
-RUN echo "export GAZEBO_MODEL_PATH=/workspace/gazebo/src/ardupilot_gazebo/models:/workspace/gazebo/src/ardupilot_gazebo/models_gazebo:$GAZEBO_MODEL_PATH" >> /root/.bashrc
+RUN echo "export GAZEBO_MODEL_PATH=/workspace/gazebo/src/ardupilot_gazebo/models:/workspace/gazebo/src/ardupilot_gazebo/models_gazebo:/workspace/gazebo/src/dragonfly_sim/models:$GAZEBO_MODEL_PATH" >> /root/.bashrc
 RUN echo "export GAZEBO_PLUGIN_PATH=/workspace/gazebo/build/ardupilot_gazebo:$GAZEBO_PLUGIN_PATH" >> /root/.bashrc
 
 COPY ./templates $WORKSPACE/templates

@@ -16,7 +16,7 @@ def template(templateFileName, values):
 def run_simulation(args):
     processes = []
     # Start Gazebo
-    processes.append(subprocess.Popen("roslaunch dragonfly_sim run_sim.launch gui:={}".format("{}".format(args.gui).lower()), shell=True))
+    processes.append(subprocess.Popen("/entrypoint.sh roslaunch dragonfly_sim run_sim.launch gui:={}".format("{}".format(args.gui).lower()), shell=True))
 
     time.sleep(3)
 
@@ -32,14 +32,14 @@ def run_simulation(args):
                       'fdm_port_out': (9003 + (i * 10))
                       }
         juav_param = template('/workspace/templates/juav.param.template', parameters)
-        model_sdf = template('/workspace/templates/model.sdf.template', parameters)
+        model_sdf = template('/workspace/templates/iris_w_depth_camera.sdf.template', parameters)
         tempfiles.append(juav_param)
         tempfiles.append(model_sdf)
 
         row = spacing * int(i / columnsize)
         column = spacing * (i % columnsize)
 
-        processes.append(subprocess.Popen('roslaunch dragonfly_sim juav.launch '
+        processes.append(subprocess.Popen('/entrypoint.sh roslaunch dragonfly_sim juav.launch '
                                           "name:=dragonfly{} ".format(i + 1) +
                                           "instance:={} ".format(i) +
                                           "tgt_system:={} ".format(i + 1) +
@@ -69,7 +69,7 @@ def run_simulation(args):
         x_tmp = r * math.cos(angle * i)
         y_tmp = r * math.sin(angle * i)
 
-        processes.append(subprocess.Popen('roslaunch dragonfly_sim juav.launch '
+        processes.append(subprocess.Popen('/entrypoint.sh roslaunch dragonfly_sim juav.launch '
                                           "name:=intruder{} ".format(i + args.drones + 1) +
                                           "instance:={} ".format(i + args.drones ) +
                                           "tgt_system:={} ".format(i + args.drones + 1) +
