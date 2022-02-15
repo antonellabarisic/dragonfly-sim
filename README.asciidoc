@@ -10,6 +10,7 @@ This repository is based on the work of the following:
 . Repository from Davide Faconti with some guidance on using nvidia integration: https://github.com/facontidavide/ros-docker-gazebo
 . Tutorial by Brett Israelsen (blog): https://bisraelsen.github.io/2017/docker/
 
+## Dragonfly Simulation
 === Step 1: Install Docker
 Install docker https://docs.docker.com/engine/installation/linux/ubuntu/
 
@@ -49,6 +50,10 @@ sudo systemctl restart docker
 ----
 
 === Step 3: Create the container
+Before proceeding, create a Docker bridge network called ```ros-net```, which allows multiple containers on the same host to communicate with each other.
+```
+docker network create --driver bridge ros-net --subnet subnet=172.18.0.0/16
+```
 
 This repository contains a basic Dockerfile under `docker/Dockerfile` with the bones necessary to start up a Gazebo simulation.
 To build, simply run the `./build.sh` script in the root.  This may require you to log into docker.io.
@@ -59,3 +64,34 @@ Finally, if everything finished without error, simply run the `./run.sh` script 
 You should see this GUI appear with the given number of drones.
 
 image::images/gazebo.png[]
+
+---
+
+## Complete Dragonfly setup
+### 1. Install
+Let's assume that you have cloned this repo in ```<workspace>``` and created a Docker image following the instructions above. To set up the simulation with https://github.com/antonellabarisic/dragonfly-controller[dragonfly-controller] and https://github.com/antonellabarisic/dragonfly-dashboard[dragonfly-dashboard], please follow the steps below. 
+
+
+```
+cd <workspace>
+git clone https://github.com/antonellabarisic/dragonfly-controller
+cd dragonfly-controller
+./build.sh
+cd ..
+git clone https://github.com/antonellabarisic/dragonfly-dashboard
+cd dragonfly-dashboard/
+git submodule update --init
+```
+There are a few files required to build the dashboard Docker. Either check the README of https://github.com/antonellabarisic/dragonfly-dashboard[dragonfly-dashboard] or download them using the following commands:
+```
+cd docker/
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1lF7giraG9OwbxvNlPkXxHbHIzOx0hJHz' -O jdk-11.0.13_linux-x64_bin.tar.gz
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1Bfbe2TMU4F3SO1U2rTCuraBNmRdRkgf8' -O arcgis-java-jnilibs-100.10.0.zip
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1RRTwuEZ2ekGJRedwNFsLQTZf1mBNIpq4' -O arcgis-java-resources-100.10.0.zip
+cd ..
+./build.sh
+```
+### 2. Run
+In each repo, start docker with script ./run.sh (or ./rundocker.sh in case of controller).
+
+
