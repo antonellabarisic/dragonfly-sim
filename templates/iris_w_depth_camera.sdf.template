@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <sdf version="1.6" xmlns:xacro='http://ros.org/wiki/xacro'>
   <model name="${name}">
-    <pose>0 0 0.194923 0 0 0</pose>
+    <pose>0 0 0.22 0 0 0</pose>
         <link name='base_link'>
           <velocity_decay>
             <linear>0.0</linear>
@@ -149,8 +149,8 @@
               <depthImageCameraInfoTopicName>/${name}/camera/depth/camera_info</depthImageCameraInfoTopicName>
               <pointCloudTopicName>/${name}/camera/depth/points</pointCloudTopicName>
               <frameName>camera_link</frameName>
-              <pointCloudCutoff>0.5</pointCloudCutoff>
-              <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+              <pointCloudCutoff>0.2</pointCloudCutoff>
+              <pointCloudCutoffMax>20.0</pointCloudCutoffMax>
               <distortionK1>0</distortionK1>
               <distortionK2>0</distortionK2>
               <distortionK3>0</distortionK3>

@@ -4,13 +4,14 @@
 	<arg name="tgt_system" default="1"/>
 	<arg name="spawn_offset_x" default="0"/>
 	<arg name="spawn_offset_y" default="0"/>
+	<arg name="spawn_offset_z" default="0"/>
 	<arg name="fcu_url" default="udp://127.0.0.1:14551@14555" />
 	<arg name="param_file" default="/workspace/gazebo/src/dragonfly_sim/juav/JUAV1/juav.param"/>
 	<arg name="model_file" default="/workspace/gazebo/src/dragonfly_sim/juav/JUAV1/model.sdf"/>
 	<arg name="location" default="HUMMINGBIRD"/>
 
 	<node name="juav_spawner$(arg instance)" pkg="gazebo_ros" type="spawn_model"
-		args="-sdf -file $(arg model_file) -x $(arg spawn_offset_x) -y $(arg spawn_offset_y) -model $(arg name)"
+		args="-sdf -file $(arg model_file) -x $(arg spawn_offset_x) -y $(arg spawn_offset_y) -z $(arg spawn_offset_z) -model $(arg name)"
 		respawn="false" output="screen" />
 
 	<node name="juav_arducopter$(arg instance)" pkg="dragonfly_sim" type="arducopter.sh" args="$(arg instance) $(arg name)$(arg tgt_system) $(arg param_file) $(arg location)"/>
