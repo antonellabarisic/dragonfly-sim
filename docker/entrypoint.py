@@ -16,8 +16,11 @@ def template(templateFileName, values):
 def run_simulation(args):
     processes = []
     # Start Gazebo
-    processes.append(subprocess.Popen("/entrypoint.sh roslaunch dragonfly_sim run_sim.launch gui:={}".format("{}".format(args.gui).lower()), shell=True))
-
+    if args.world == 'baylands':
+        processes.append(subprocess.Popen("/entrypoint.sh roslaunch marcus_gazebo baylands.launch gui:={}".format("{}".format(args.gui).lower()), shell=True))
+    else:
+        processes.append(subprocess.Popen("/entrypoint.sh roslaunch dragonfly_sim run_sim.launch gui:={}".format("{}".format(args.gui).lower()), shell=True))
+    
     time.sleep(3)
 
     tempfiles = []
@@ -126,6 +129,10 @@ def get_args():
         type=float,
         default=10.0
     )
+    parser.add_argument(
+        '--world',
+        type=str,
+        default='empty')
     args = parser.parse_args()
     return args
 

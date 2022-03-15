@@ -57,7 +57,8 @@ RUN mkdir $WORKSPACE/gazebo
 COPY ./gazebo $WORKSPACE/gazebo
 
 RUN cd $WORKSPACE/gazebo/src && \
-    git clone --recurse-submodules -j8 https://github.com/antonellabarisic/ardupilot_gazebo.git
+    git clone --recurse-submodules -j8 https://github.com/antonellabarisic/ardupilot_gazebo.git && \
+    git clone https://github.com/MARHES-UNM/marcus_gazebo.git
 
 RUN source /opt/ros/melodic/setup.bash && \
     cd $WORKSPACE/gazebo && \
