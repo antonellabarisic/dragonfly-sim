@@ -23,4 +23,4 @@ docker run -it \
     -p 11311:11311 \
     --network ros-net \
     --entrypoint /bin/bash \
-    dragonfly-sim:latest
+    dragonfly-sim-kopter:latest

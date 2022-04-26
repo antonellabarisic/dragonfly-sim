@@ -1,4 +1,4 @@
 #!/bin/bash
-docker build -t dragonfly-sim -f docker/Dockerfile .
+docker build -t dragonfly-sim-kopter -f docker/Dockerfile .
 
 
