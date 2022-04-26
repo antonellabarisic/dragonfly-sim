@@ -17,7 +17,8 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Install Dependencies
 RUN apt-get -qq install python-dev python-opencv python-wxgtk3.0 \
     python-pip python-matplotlib python-pygame python-lxml python-yaml \
-    ros-melodic-mavros ros-melodic-mavros-extras libgazebo9-dev rsync
+    ros-melodic-mavros ros-melodic-mavros-extras libgazebo9-dev rsync \
+    ros-melodic-octomap-ros libgoogle-glog-dev
 
 # Install MavProxy
 RUN pip install MAVProxy
@@ -37,6 +38,8 @@ RUN cd $WORKSPACE && \
     git clone --recurse-submodules -j8 https://github.com/ArduPilot/ardupilot.git
 
 
+# RUN .$WORKSPACE/ardupilot/Tools/environment_install/install-prereqs-ubuntu.sh -y > /dev/null
+
 # Add hummingbird springs as default location (https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)
 RUN echo "HUMMINGBIRD=35.824822,-106.6577015,2036,0" >> $WORKSPACE/ardupilot/Tools/autotest/locations.txt
 RUN echo "ARROYO_DEL_OSO=35.138824,-106.556401,1643,0" >> $WORKSPACE/ardupilot/Tools/autotest/locations.txt
@@ -46,8 +49,9 @@ RUN echo "SALT_SPRINGS=38.498443,-112.8528725,230,0" >> $WORKSPACE/ardupilot/Too
 # Install pexpect for ardupilot build
 RUN pip install pexpect
 
-RUN cd $WORKSPACE/ardupilot && \
-    ./waf configure && ./waf copter
+# Build ardupilot binaries
+RUN cd $WORKSPACE/ardupilot && modules/waf/waf-light configure --board sitl
+RUN cd $WORKSPACE/ardupilot && modules/waf/waf-light build --target bin/arducopter
 
 # RUN cd $WORKSPACE/ardupilot_gazebo && \
 #     mkdir build && cd build && cmake .. && make -j4 && make install
@@ -57,8 +61,25 @@ RUN mkdir $WORKSPACE/gazebo
 COPY ./gazebo $WORKSPACE/gazebo
 
 RUN cd $WORKSPACE/gazebo/src && \
-    git clone --recurse-submodules -j8 https://github.com/antonellabarisic/ardupilot_gazebo.git && \
-    git clone https://github.com/MARHES-UNM/marcus_gazebo.git
+    git clone https://github.com/larics/ardupilot_gazebo && \
+    cd ardupilot_gazebo && \
+    git checkout larics-master
+
+RUN cd $WORKSPACE/gazebo/src && \
+    git clone https://github.com/larics/rotors_simulator && \
+    cd rotors_simulator && \
+    git checkout larics_melodic_master
+
+RUN cd $WORKSPACE/gazebo/src && \
+    git clone https://github.com/larics/mav_comm && \
+    cd mav_comm && \
+    git checkout larics_master
+
+
+# RUN cd $WORKSPACE/gazebo/src && \
+#     git clone https://github.com/ethz-asl/rotors_simulator && \
+#     git clone https://github.com/ethz-asl/mav_comm.git && \
+#     git clone https://github.com/catkin/catkin_simple.git
 
 RUN source /opt/ros/melodic/setup.bash && \
     cd $WORKSPACE/gazebo && \
@@ -76,5 +97,7 @@ COPY ./templates $WORKSPACE/templates
 # Setup Entrypoint
 COPY ./docker/entrypoint.sh /
 COPY ./docker/entrypoint.py /
+COPY ./docker/entrypoint_kopterworx.py /
+
 
 ENTRYPOINT ["/entrypoint.py"]
