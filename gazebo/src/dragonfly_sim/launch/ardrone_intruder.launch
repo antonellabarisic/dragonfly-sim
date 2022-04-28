@@ -1,0 +1,63 @@
+<launch>
+	<arg name="name" default="JUAV1"/>
+	<arg name="instance" default="0"/>
+	<arg name="tgt_system" default="1"/>
+	<arg name="spawn_offset_x" default="0"/>
+	<arg name="spawn_offset_y" default="0"/>
+	<arg name="spawn_offset_z" default="0"/>
+    <arg name="enable_logging" default="false"/>
+    <arg name="enable_ground_truth" default="true"/>
+    <arg name="log_file" default="uav_log"/>
+    <arg name="exclude_floor_link_from_collision_check" default="ground_plane::link"/>
+    <arg name="model_type" default="uav" />
+    <arg name="model" value="$(find ardupilot_gazebo)/models/ardrone/urdf/$(arg model_type).gazebo.xacro" />
+    <arg name="manipulator_type" default="none" />
+    <arg name="manipulator_tool" default="none" />
+    <arg name="mount_magnet" default="false" />
+    <arg name="mount_magnet_with_disk" default="false" />
+    <arg name="magnet_dipole_moment_z" default="970" />
+	<arg name="fcu_url" default="udp://127.0.0.1:14551@14555" />
+    <arg name="fdm_port_in"         default="9002"/>
+	<arg name="fdm_port_out"        default="9003"/>
+	<arg name="param_file" default="/workspace/gazebo/src/dragonfly_sim/juav/JUAV1/juav.param"/>
+	<arg name="model_file" default="/workspace/gazebo/src/dragonfly_sim/juav/JUAV1/model.sdf"/>
+	<arg name="location" default="HUMMINGBIRD"/>
+
+    <!-- send the robot XML to param server -->
+    <param name="/$(arg name)/robot_description" command="
+        $(find xacro)/xacro --inorder '$(arg model)'
+        enable_logging:=$(arg enable_logging)
+        enable_ground_truth:=$(arg enable_ground_truth)
+        exclude_floor_link_from_collision_check:=$(arg exclude_floor_link_from_collision_check)
+        log_file:=$(arg log_file)
+        name:=$(arg name)
+        fdm_port_in:=$(arg fdm_port_in)
+		fdm_port_out:=$(arg fdm_port_out)
+        manipulator_type:=$(arg manipulator_type)
+        manipulator_tool:=$(arg manipulator_tool)
+        mount_magnet:=$(arg mount_magnet)
+        mount_magnet_with_disk:=$(arg mount_magnet_with_disk)
+        magnet_dipole_moment_z:=$(arg magnet_dipole_moment_z)"
+    />
+
+    <param name="tf_prefix" type="string" value="$(arg name)" />
+
+    <!-- push robot_description to factory and spawn robot in gazebo -->
+    <node name="spawn_robot$(arg instance)" pkg="gazebo_ros" type="spawn_model"
+    args="-param /$(arg name)/robot_description
+            -urdf
+            -x $(arg spawn_offset_x)
+            -y $(arg spawn_offset_y)
+            -z $(arg spawn_offset_z)
+            -model $(arg name)"
+    respawn="false" output="screen" >
+    </node>
+
+	<node name="juav_arducopter$(arg instance)" pkg="dragonfly_sim" type="arducopter.sh" args="$(arg instance) $(arg name)$(arg tgt_system) $(arg param_file) $(arg location)"/>
+
+	<include file="$(find dragonfly_sim)/launch/apm.launch">
+		<arg name="name" value="$(arg name)" />
+		<arg name="tgt_system" value="$(arg tgt_system)"/>
+		<arg name="fcu_url" value="$(arg fcu_url)"/>
+	</include>
+</launch>
