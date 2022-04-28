@@ -5,6 +5,7 @@
 	<!-- Start Gazebo -->
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
 		<arg name="paused" value="$(arg paused)"/>
+		<arg name="verbose"         value="true" />
 		<arg name="world_name" value="worlds/empty_sky.world" />
 		<arg name="gui" value="$(arg gui)"/>
 	</include>
