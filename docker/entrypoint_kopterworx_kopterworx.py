@@ -47,6 +47,7 @@ def run_simulation(args):
                                           "spawn_offset_y:={} ".format(column) +
                                           "fcu_url:=udp://127.0.0.1:{}@{} ".format(14551 + (i * 10), 14555 + (i * 10)) +
                                           "param_file:={} ".format(juav_param.name) +
+                                          "enable_gimbal:={} ".format("true") +
                                           "fdm_port_in:={} ".format(9002 + (i * 10)) +
                                           "fdm_port_out:={} ".format(9003 + (i * 10)) +
                                           "location:={} ".format(args.location),
