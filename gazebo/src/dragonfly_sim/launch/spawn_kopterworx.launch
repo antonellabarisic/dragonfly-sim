@@ -17,10 +17,11 @@
 	<arg name="enable_ground_truth" default="true"/>
 	<arg name="enable_velodyne" default="false" />
     <arg name="enable_magnet"   default="false" />
+    <arg name="enable_gimbal"   default="false" />
 
 	<!-- send the robot XML to param server -->
 	<param name="$(arg name)/robot_description" command="
-	  $(find xacro)/xacro --inorder $(arg model) namespace:=$(arg name) enable_velodyne:=$(arg enable_velodyne) enable_magnet:=$(arg enable_magnet) fdm_port_in:=$(arg fdm_port_in) fdm_port_out:=$(arg fdm_port_out)
+	  $(find xacro)/xacro --inorder $(arg model) namespace:=$(arg name) enable_velodyne:=$(arg enable_velodyne) enable_magnet:=$(arg enable_magnet) enable_gimbal:=$(arg enable_gimbal) fdm_port_in:=$(arg fdm_port_in) fdm_port_out:=$(arg fdm_port_out)
 	  " />
 
 	<param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
