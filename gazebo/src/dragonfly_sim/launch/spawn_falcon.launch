@@ -1,0 +1,47 @@
+<launch>
+
+	<arg name="name" default="dragonfly1"/>
+	<arg name="instance" default="0"/>
+	<arg name="tgt_system" default="1"/>
+	<arg name="spawn_offset_x" default="0"/>
+	<arg name="spawn_offset_y" default="0"/>
+	<arg name="spawn_offset_z" default="0.5"/>
+	<arg name="fcu_url" default="udp://127.0.0.1:14551@14555" />
+	<arg name="param_file" default="/workspace/gazebo/src/dragonfly_sim/juav/JUAV1/juav.param"/>
+	<arg name="location" default="HUMMINGBIRD"/>
+
+	<arg name="model" value="$(find ardupilot_gazebo)/models/kopterworx/urdf/kopterworx_falcon.urdf.xacro" />
+	<arg name="fdm_port_in" default="9002"/>
+	<arg name="fdm_port_out" default="9003"/>
+	<arg name="tf_prefix" default="$(arg name)"/>
+	<arg name="enable_ground_truth" default="true"/>
+	<arg name="enable_velodyne" default="false" />
+    <arg name="enable_magnet"   default="false" />
+    <arg name="enable_gimbal"   default="false" />
+
+	<!-- send the robot XML to param server -->
+	<param name="$(arg name)/robot_description" command="
+	  $(find xacro)/xacro --inorder $(arg model) namespace:=$(arg name) enable_velodyne:=$(arg enable_velodyne) enable_magnet:=$(arg enable_magnet) enable_gimbal:=$(arg enable_gimbal) fdm_port_in:=$(arg fdm_port_in) fdm_port_out:=$(arg fdm_port_out)
+	  " />
+
+	<param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" ns="$(arg name)"/>
+
+	<!-- push robot_description to factory and spawn robot in gazebo -->
+	<node name="juav_spawner$(arg instance)" pkg="gazebo_ros" type="spawn_model" args="-param $(arg name)/robot_description
+	       -urdf
+	       -x $(arg spawn_offset_x)
+	       -y $(arg spawn_offset_y)
+	       -z $(arg spawn_offset_z)
+	       -model $(arg name)" respawn="false" output="screen">
+	</node>
+
+	<node name="juav_arducopter$(arg instance)" pkg="dragonfly_sim" type="arducopter.sh" args="$(arg instance) $(arg name) $(arg param_file) $(arg location)"/>
+
+	<include file="$(find dragonfly_sim)/launch/apm.launch">
+		<arg name="name" value="$(arg name)" />
+		<arg name="tgt_system" value="$(arg tgt_system)"/>
+		<arg name="fcu_url" value="$(arg fcu_url)"/>
+	</include>
+
+</launch>

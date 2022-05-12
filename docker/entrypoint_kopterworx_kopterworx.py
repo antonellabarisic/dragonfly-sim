@@ -39,7 +39,7 @@ def run_simulation(args):
         row = spacing * int(i / columnsize)
         column = spacing * (i % columnsize)
 
-        processes.append(subprocess.Popen('/entrypoint.sh roslaunch dragonfly_sim spawn_kopterworx.launch '
+        processes.append(subprocess.Popen('/entrypoint.sh roslaunch dragonfly_sim spawn_falcon.launch '
                                           "name:=dragonfly{} ".format(i + 1) +
                                           "instance:={} ".format(i) +
                                           "tgt_system:={} ".format(i + 1) +
