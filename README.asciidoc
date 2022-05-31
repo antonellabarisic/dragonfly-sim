@@ -111,6 +111,10 @@ cd src/marcus_ros_stack/
 gitman install
 catkin build
 ```
+```
+cd src/marcus_ros_stack/
+./marcus_sim.sh
+```
 3. Dashboard
 ``` 
 cd dragonfly-dashboard
