@@ -34,11 +34,12 @@ RUN mkdir -p $WORKSPACE/data && \
     ./install_geographiclib_datasets.sh
 
 # Install simulation
-RUN cd $WORKSPACE && \
-    git clone --recurse-submodules -j8 https://github.com/ArduPilot/ardupilot.git
+RUN cd $WORKSPACE && git clone https://github.com/larics/ardupilot.git
 
+RUN cd $WORKSPACE/ardupilot && git checkout 5e4a5398dbe5c23acda5df0a81b655d1dfc01e5b
+RUN cd $WORKSPACE/ardupilot && git submodule update --init --recursive
 
-# RUN .$WORKSPACE/ardupilot/Tools/environment_install/install-prereqs-ubuntu.sh -y > /dev/null
+# RUN .$WORKSPACE/ardupilot/Tools/environment_install/install-prereqs-ubuntu.sh -y
 
 # Add hummingbird springs as default location (https://ardupilot.org/dev/docs/using-sitl-for-ardupilot-testing.html)
 RUN echo "HUMMINGBIRD=35.824822,-106.6577015,2036,0" >> $WORKSPACE/ardupilot/Tools/autotest/locations.txt
@@ -61,9 +62,9 @@ RUN mkdir $WORKSPACE/gazebo
 COPY ./gazebo $WORKSPACE/gazebo
 
 RUN cd $WORKSPACE/gazebo/src && \
-    git clone https://github.com/larics/ardupilot_gazebo && \
+    git clone https://github.com/antonellabarisic/ardupilot_gazebo.git && \
     cd ardupilot_gazebo && \
-    git checkout larics-master
+    git checkout larics-master-dev
 
 RUN cd $WORKSPACE/gazebo/src && \
     git clone https://github.com/larics/rotors_simulator && \
@@ -80,7 +81,7 @@ RUN cd $WORKSPACE/gazebo/src && \
 #     git clone https://github.com/ethz-asl/rotors_simulator && \
 #     git clone https://github.com/ethz-asl/mav_comm.git && \
 #     git clone https://github.com/catkin/catkin_simple.git
-
+RUN ls
 RUN source /opt/ros/melodic/setup.bash && \
     cd $WORKSPACE/gazebo && \
     catkin build
@@ -98,6 +99,8 @@ COPY ./templates $WORKSPACE/templates
 COPY ./docker/entrypoint.sh /
 COPY ./docker/entrypoint.py /
 COPY ./docker/entrypoint_kopterworx.py /
+COPY ./docker/entrypoint_kopterworx_kopterworx.py /
 
 
-ENTRYPOINT ["/entrypoint.py"]
+
+ENTRYPOINT ["/entrypoint_kopterworx_kopterworx.py"]
