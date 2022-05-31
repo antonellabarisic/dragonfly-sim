@@ -59,6 +59,10 @@ This repository contains a basic Dockerfile under `docker/Dockerfile` with the b
 To build, simply run the `./build.sh` script in the root.  This may require you to log into docker.io.
 
 === Step 4: Run the container
+```
+git clone https://github.com/antonellabarisic/dragonfly-sim.git
+git checkout marcus_kopter
+```
 
 Finally, if everything finished without error, simply run the `./run.sh` script to standup the Gazebo simuation docker container.
 You should see this GUI appear with the given number of drones.
@@ -69,14 +73,14 @@ image::images/gazebo.png[]
 
 ## Complete Dragonfly setup
 ### 1. Install
-Let's assume that you have cloned this repo in ```<workspace>``` and created a Docker image following the instructions above. To set up the simulation with https://github.com/antonellabarisic/dragonfly-controller[dragonfly-controller] and https://github.com/antonellabarisic/dragonfly-dashboard[dragonfly-dashboard], please follow the steps below. 
+Let's assume that you have cloned this repo in ```<workspace>``` and created a Docker image following the instructions above. To set up the simulation with https://github.com/antonellabarisic/marcus_ros_stack.git[marcus_ros_stack] and https://github.com/antonellabarisic/dragonfly-dashboard[dragonfly-dashboard], please follow the steps below. 
 
 
 ```
 cd <workspace>
-git clone https://github.com/antonellabarisic/dragonfly-controller
-cd dragonfly-controller
-./build.sh
+git clone https://github.com/antonellabarisic/marcus_ros_stack.git
+cd marcus_ros_stack
+./build_docker.sh
 cd ..
 git clone https://github.com/antonellabarisic/dragonfly-dashboard
 cd dragonfly-dashboard/
@@ -93,5 +97,24 @@ cd ..
 ```
 ### 2. Run
 In each repo, start docker with script ./run.sh (or ./rundocker.sh in case of controller).
+
+1. Simulation
+``` 
+cd dragonfly-sim
+./run.sh
+```
+2. Perception and control
+```
+cd marcus_ros_stack
+./run_docker.sh
+cd src/marcus_ros_stack/
+gitman install
+catkin build
+```
+3. Dashboard
+``` 
+cd dragonfly-dashboard
+./run_sim.sh
+```
 
 
