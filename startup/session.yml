@@ -1,6 +1,6 @@
 name: dragonfly_docker
 root: ./
-startup_window: roscore
+startup_window: detection
 pre_window: |
   export SIM_PATH=~/Workspace/amerika_ws/src/dragonfly-sim
   export DASH_PATH=~/Workspace/amerika_ws/src/dragonfly-dashboard
@@ -20,14 +20,22 @@ windows:
       panes:
         - |
           xhost +
-          sleep 30
+          sleep 35
           docker exec -it marcus_ros_stack /bin/bash
           roslaunch uav_object_tracking marcus.launch
         - |
-          sleep 30
+          sleep 32
+          docker exec -it marcus_ros_stack /bin/bash
+          roslaunch uav_ros_tracker topp_tracker_marcus.launch
+        - |
+          sleep 40
           docker exec -it marcus_ros_stack /bin/bash
           roslaunch uav_visual_tracking marcus_sim.launch
         - |
-          sleep 30
+          sleep 45
           docker exec -it marcus_ros_stack /bin/bash
           rosrun dragonfly_ros_control pbvs_local.py
+        - |
+          sleep 50
+          docker exec -it marcus_ros_stack /bin/bash
+          roslaunch dragonfly_ros_control pursuer_state_machine.launch
