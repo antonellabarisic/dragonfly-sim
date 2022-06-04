@@ -38,4 +38,4 @@ windows:
         - |
           sleep 50
           docker exec -it marcus_ros_stack /bin/bash
-          roslaunch dragonfly_ros_control pursuer_state_machine.launch
+          roslaunch dragonfly_ros_control pursuer_state_machine.launch detection_flag:=/YOLODetection/uav_following_confident 
