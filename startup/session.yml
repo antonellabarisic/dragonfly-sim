@@ -2,8 +2,8 @@ name: dragonfly_docker
 root: ./
 startup_window: detection
 pre_window: |
-  export SIM_PATH=~/Workspace/amerika_ws/src/dragonfly-sim
-  export DASH_PATH=~/Workspace/amerika_ws/src/dragonfly-dashboard
+  export SIM_PATH=~/dragonfly/dragonfly-sim
+  export DASH_PATH=~/dragonfly/dragonfly-dashboard
 windows:
   - dragonfly:
       layout: tiled
@@ -15,6 +15,10 @@ windows:
           docker start -i marcus_ros_stack
           cd src/marcus_ros_stack
           ./marcus_sim.sh
+        - |
+          sleep 45
+          docker exec -it marcus_ros_stack /bin/bash
+          rosrun dragonfly_ros_control set_mavros.sh
   - detection:
       layout: tiled
       panes:
@@ -24,13 +28,16 @@ windows:
           docker exec -it marcus_ros_stack /bin/bash
           roslaunch uav_object_tracking marcus.launch
         - |
-          sleep 32
-          docker exec -it marcus_ros_stack /bin/bash
-          roslaunch uav_ros_tracker topp_tracker_marcus.launch
-        - |
           sleep 40
           docker exec -it marcus_ros_stack /bin/bash
           roslaunch uav_visual_tracking marcus_sim.launch
+  - control:
+      layout: tiled
+      panes:
+        - |
+          sleep 32
+          docker exec -it marcus_ros_stack /bin/bash
+          roslaunch dragonfly_ros_control topp_tracker_marcus.launch
         - |
           sleep 45
           docker exec -it marcus_ros_stack /bin/bash
@@ -39,3 +46,15 @@ windows:
           sleep 50
           docker exec -it marcus_ros_stack /bin/bash
           roslaunch dragonfly_ros_control pursuer_state_machine.launch detection_flag:=/YOLODetection/uav_following_confident 
+        - |
+          sleep 55
+          docker exec -it marcus_ros_stack /bin/bash
+          rosrun dragonfly_ros_control detection_to_local_node gps:=/red/detection/gps __ns:=$UAV_NAMESPACE
+        - |
+          sleep 55
+          docker exec -it marcus_ros_stack /bin/bash
+          rostopic echo /dragonfly1/pursuer/state
+        - |
+          sleep 60
+          docker exec -it marcus_ros_stack /bin/bash
+          rosrun dragonfly_ros_control detection_to_global_node __ns:=$UAV_NAMESPACE
